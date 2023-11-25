@@ -15,5 +15,6 @@ add_executable(Google_Tests_run
         ../Stats.cpp
         FileWriter_test.cpp
         ../FileWriter.h
-        ../FileWriter.cpp)
+        ../FileWriter.cpp
+        ../main.cpp)
 target_link_libraries(Google_Tests_run gtest gtest_main)
