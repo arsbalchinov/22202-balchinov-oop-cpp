@@ -3,6 +3,3 @@
 
 # CMake
 cmake-build-*/
-
-# google test souces
-Google_tests/lib
