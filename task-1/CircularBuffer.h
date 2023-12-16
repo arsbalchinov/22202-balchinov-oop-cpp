@@ -5,325 +5,83 @@
 #include <algorithm>
 #include <stdexcept>
 using namespace std;
+typedef char Type;
 
-template<typename Type>
 class CircularBuffer {
 private:
     Type* buffer;
-    int maxSize;        //Capacity of the buffer
-    int elemCount;      //Size of buffer
-    int head;           //Index of the first element
-    int tail;           //Index of the last element
+    int maxSize;        //capacity of buffer
+    int elemCount;      //size of buffer
+    int head;           //index of the 1st element
+    int tail;           //index of the last element
 
 public:
 //Constructor
-    CircularBuffer() {
-        buffer = nullptr;
-        maxSize = 0;
-        elemCount = 0;
-        head = 0;
-        tail = 0;
-    };
+    CircularBuffer();
 //Destructor
-    ~CircularBuffer() {
-        delete[] buffer;
-    };
+    ~CircularBuffer();
 //Create new buffer from existing buffer (The copy constructor).
-    CircularBuffer(const CircularBuffer& cb) {
-        maxSize = cb.maxSize;
-        elemCount = cb.elemCount;
-        head = cb.head;
-        tail = cb.tail;
-        buffer = new Type[maxSize];
-        for (int i = 0; i < maxSize; i++) {
-            buffer[i] = cb[i];
-        }
-    };
+    CircularBuffer(const CircularBuffer& cb);
 //Create an empty buffer with the specified capacity.
-    explicit CircularBuffer(int capacity) {
-        maxSize = capacity;
-        elemCount = 0;
-        head = 0;
-        tail = 0;
-        buffer = new Type[maxSize];
-    };
+    explicit CircularBuffer(int capacity);
 //Create a full buffer with the specified capacity and filled with the copies of item.
-    CircularBuffer(int capacity, const Type& elem) {
-        maxSize = capacity;
-        elemCount = capacity;
-        head = 0;
-        tail = max(0, capacity - 1);
-        buffer = new Type[maxSize];
-        for (int i = 0; i < maxSize; i++) {
-            buffer[i] = elem;
-        }
-    };
+    CircularBuffer(int capacity, const Type& elem);
 //Get the element at the index position. Does not check the correctness of the index.
-    Type& operator[](int i) {
-        int index = (head + i) % maxSize;
-        return buffer[index];
-    }
-    const Type& operator[](int i) const {
-        int index = (head + i) % maxSize;
-        return buffer[index];
-    }
+    Type& operator[](int i);
+    const Type& operator[](int i) const;
 //Get the element at the index position. Methods throw an exception in case of wrong index.
-    Type& at(int i) {
-        if (i < 0 || i >= elemCount) {
-            throw out_of_range("Wrong index");
-        }
-        int index = (head + i) % maxSize;
-        return buffer[index];
-    }
-    const Type& at(int i) const {
-        if (i < 0 || i >= elemCount) {
-            throw out_of_range("Wrong index");
-        }
-        int index = (head + i) % maxSize;
-        return buffer[index];
-    }
+    Type& at(int i);
+    const Type& at(int i) const;
 //Get the first element.
-    Type& front() {
-        if (elemCount == 0) {
-            throw out_of_range("Buffer is empty");
-        }
-        return buffer[head];
-    }
-    const Type& front() const {
-        if (elemCount == 0) {
-            throw out_of_range("Buffer is empty");
-        }
-        return buffer[head];
-    }
+    Type& front();
+    const Type& front() const;
 //Get the last element.
-    Type& back() {
-        if (elemCount == 0) {
-            throw out_of_range("Buffer is empty");
-        }
-        return buffer[tail];
-    }
-    const Type& back() const {
-        if (elemCount == 0) {
-            throw out_of_range("Buffer is empty");
-        }
-        return buffer[tail];
-    }
+    Type& back();
+    const Type& back() const;
 //Linearize buffer into a continuous array. Shift the ring buffer
 //so that its first element moves to the beginning of the allocated memory.
-    Type* linearize() {
-        if (elemCount == 0) {
-            return 0;
-        }
-        std::rotate(buffer, buffer + head, buffer + maxSize);
-        head = 0;
-        tail = elemCount - 1;
-        return buffer;
-    }
+    Type* linearize();
 //Check if the buffer is linearized.
-    bool is_linearized() const {
-        return head == 0;
-    }
+    bool is_linearized() const;
 //Shift the buffer so that an element with the new_begin index appears at the zero index.
-    void rotate(int new_begin) {
-        if (new_begin < 0 || new_begin >= elemCount) {
-            throw out_of_range("Wrong new begin");
-        }
-        int index = (head + new_begin) % maxSize;
-        std::rotate(buffer, buffer + index, buffer + maxSize);
-    }
+    void rotate(int new_begin);
 //Get an unlinearized array from the buffer
-    Type* array() {
-        return buffer;
-    }
+    Type* array();
 //The number of elements stored in the buffer.
-    int size() const {
-        return elemCount;
-    }
+    int size() const;
 //Return true, if size() == 0.
-    bool empty() const {
-        return elemCount == 0;
-    }
+    bool empty() const;
 //Return true, if size() == capacity().
-    bool full() const {
-        return elemCount == maxSize;
-    }
+    bool full() const;
 //The number of free cells.
-    int reserve() const {
-        return maxSize - elemCount;
-    }
+    int reserve() const;
 //The buffer capacity.
-    int capacity() const {
-        return maxSize;
-    }
+    int capacity() const;
 //Change the buffer capacity.
-    void set_capacity(int new_capacity) {
-        linearize();
-        Type* new_buffer = new Type[new_capacity];
-        for (int i = 0; i < min(elemCount, new_capacity); i++) {
-            new_buffer[i] = buffer[i];
-        }
-        maxSize = new_capacity;
-        elemCount = min(elemCount, new_capacity);
-        tail = max(0, elemCount - 1);
-
-        delete[] buffer;
-        buffer = new_buffer;
-    }
+    void set_capacity(int new_capacity);
 //Change the buffer size.
 //In case of buffer expansion, the new cells are filled with the item element.
-    void resize(int new_size, const Type& item = Type()) {
-        if (new_size == elemCount) {
-            return;
-        }
-        if (new_size > maxSize) {
-            set_capacity(new_size);
-        }
-        if (new_size > elemCount) {
-            int new_cells = new_size - elemCount;
-            for (int i = 0; i < new_cells; i++) {
-                push_back(item);
-            }
-        }
-        else {
-            erase(new_size,elemCount);
-        }
-    }
-//Assignment operator. Make this buffer a copy of the specified buffer.
-    CircularBuffer& operator=(const CircularBuffer& cb) {
-        if (&cb != buffer) {
-            maxSize = cb.maxSize;
-            elemCount = cb.elemCount;
-            head = cb.head;
-            tail = cb.tail;
-            Type* oldBuffer = buffer;
-            buffer = new Type[maxSize];
-            for (int i = 0; i < elemCount; i++) {
-                buffer[i] = cb[i];
-            }
-            delete[] oldBuffer;
-        }
-        return buffer;
-    }
+    void resize(int new_size, const Type& item = Type());
+//Assignment operator. Make this buffer to become a copy of the specified buffer.
+    CircularBuffer& operator=(const CircularBuffer& cb);
 //Swap the contents of two buffers.
-    void swap(CircularBuffer& cb) {
-        std::swap(buffer, cb.buffer);
-        std::swap(maxSize, cb.maxSize);
-        std::swap(elemCount, cb.elemCount);
-        std::swap(head, cb.head);
-        std::swap(tail, cb.tail);
-    }
+    void swap(CircularBuffer& cb);
 //Insert a new element at the end of the buffer.
-    void push_back(const Type& item = Type()) {
-        if (maxSize == 0) {
-            throw out_of_range("Buffer has zero capacity");
-        }
-        tail = (elemCount == 0) ? tail : (tail + 1) % maxSize;
-        buffer[tail] = item;
-        head = (elemCount == maxSize) ? (head + 1) % maxSize : head;
-        elemCount = (elemCount == maxSize) ? elemCount : elemCount + 1;
-    }
-//Insert a new element at the beginning of the buffer.
-    void push_front(const Type& item = Type()) {
-        if (maxSize == 0) {
-            throw out_of_range("Buffer has zero capacity");
-        }
-        head = (elemCount == 0) ? head : (head - 1 + maxSize) % maxSize;
-        buffer[head] = item;
-        tail = (elemCount == maxSize) ? (tail - 1 + maxSize) % maxSize : tail;
-        elemCount = (elemCount == maxSize) ? elemCount : elemCount + 1;
-    }
-//Remove the last element from the buffer.
-    Type& pop_back() {
-        Type& backElement = back();
-        elemCount--;
-        if (elemCount == 0) {
-            tail = head;
-        }
-        else {
-            tail = (tail - 1 + maxSize) % maxSize;
-        }
-        return backElement;
-    }
-//Remove the last element from the buffer.
-    Type& pop_front() {
-        Type& frontElement = front();
-        elemCount--;
-        if (elemCount == 0) {
-            head = tail;
-        }
-        else {
-            head = (head + 1) % maxSize;
-        }
-        return frontElement;
-    }
+    void push_back(const Type& item = Type());
+//Insert a new element at the beginning of the circular_buffer.
+    void push_front(const Type& item = Type());
+//Remove the last element from the circular_buffer.
+    Type& pop_back();
+//Remove the last element from the circular_buffer.
+    Type& pop_front();
 //Insert an element at the specified position.
-    void insert(int pos, const Type item = Type()) {
-        if (maxSize == 0) {
-            throw out_of_range("Buffer has zero capacity");
-        }
-        if (pos < 0 || pos > elemCount) {
-            throw out_of_range("Wrong insert position");
-        }
-        int oldHead = head;
-        push_back();
-        for (int i = elemCount - 1; i > pos; i--) {
-            buffer[i] = buffer[i - 1]; // pos + 1 = pos
-        }
-        int index = (oldHead + pos) % maxSize;
-        buffer[index] = item;
-    }
+    void insert(int pos, const Type item = Type());
 //Erase elements from the buffer in the range [first, last).
-    void erase(int first, int last) {
-        if (first < 0 || first > elemCount || last < 0 || last > elemCount) {
-            throw out_of_range("Wrong index");
-        }
-        if (first == last) {
-            return;
-        }
-        if (first > last) {
-            throw invalid_argument("Index of the last element must be greater than index of the first");
-        }
-        for (int i = last; i < elemCount; i++) {
-            int shift = i - last;
-            buffer[first + shift] = buffer[i];
-        }
-        int deleted = last - first;
-        elemCount -= deleted;
-        if (elemCount == 0) {
-            tail = head;
-        }
-        else {
-            tail = (tail - deleted + maxSize) % maxSize;
-        }
-    }
+    void erase(int first, int last);
 //Clear the buffer.
-    void clear() {
-        elemCount = 0;
-        tail = head;
-    }
+    void clear();
 };
-template<typename Type>
-bool operator==(const CircularBuffer<Type>& a, const CircularBuffer<Type>& b) {
-    if (a.capacity() != b.capacity() || a.size() != b.size()) {
-        return false;
-    }
-    for (int i = 0; i < a.size(); i++) {
-        if (a[i] != b[i]) {
-            return false;
-        }
-    }
-    return true;
-}
-template<typename Type>
-bool operator!=(const CircularBuffer<Type>& a, const CircularBuffer<Type>& b) {
-    if (a.capacity() != b.capacity() || a.size() != b.size()) {
-        return true;
-    }
-    for (int i = 0; i < a.size(); i++) {
-        if (a[i] != b[i]) {
-            return true;
-        }
-    }
-    return false;
-}
+bool operator==(const CircularBuffer& a, const CircularBuffer& b);
+bool operator!=(const CircularBuffer& a, const CircularBuffer& b);
+
 #endif //TASK_1_CIRCULARBUFFER_H

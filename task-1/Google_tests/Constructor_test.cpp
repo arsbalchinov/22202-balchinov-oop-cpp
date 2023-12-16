@@ -2,25 +2,25 @@
 #include "../CircularBuffer.h"
 
 TEST(Constructor, emptyTest) {
-    CircularBuffer<int> cb;
+    CircularBuffer cb;
     EXPECT_TRUE(cb.empty());
     EXPECT_TRUE(cb.full());
     EXPECT_EQ(cb.capacity(), 0);
 }
 TEST(Constructor, capacityTest1) {
-    CircularBuffer<int> cb(0);
+    CircularBuffer cb(0);
     EXPECT_TRUE(cb.empty());
     EXPECT_TRUE(cb.full());
     EXPECT_EQ(cb.capacity(), 0);
 }
 TEST(Constructor, capacityTest2) {
-    CircularBuffer<int> cb(10);
+    CircularBuffer cb(10);
     EXPECT_TRUE(cb.empty());
     EXPECT_FALSE(cb.full());
     EXPECT_EQ(cb.capacity(), 10);
 }
 TEST(Constructor, constructorTest) {
-    CircularBuffer<int> cb(10, 5);
+    CircularBuffer cb(10, 5);
     EXPECT_FALSE(cb.empty());
     for (int i = 0; i < 10; i++) {
         EXPECT_EQ(cb[i], 5);
@@ -28,11 +28,11 @@ TEST(Constructor, constructorTest) {
     EXPECT_TRUE(cb.full());
 }
 TEST(Constructor, copyTest) {
-    CircularBuffer<int> cb(10, 3);
+    CircularBuffer cb(10, 3);
     EXPECT_FALSE(cb.empty());
     EXPECT_TRUE(cb.full());
     EXPECT_EQ(cb.capacity(), 10);
-    CircularBuffer<int> cb1(cb);
+    CircularBuffer cb1(cb);
     EXPECT_TRUE(cb == cb1);
     cb.push_front(0);
     EXPECT_TRUE(cb != cb1);

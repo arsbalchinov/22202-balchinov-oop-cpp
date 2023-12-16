@@ -3,15 +3,15 @@
 
 TEST(Swap, SwapTest1) {
     int capacity = 3;
-    CircularBuffer<int> cb(capacity, 1);
-    CircularBuffer<int> cb1 = cb;
+    CircularBuffer cb(capacity, 1);
+    CircularBuffer cb1 = cb;
     EXPECT_TRUE(cb == cb1);
     cb.swap(cb1);
     EXPECT_TRUE(cb == cb1);
 }
 TEST(Swap, SwapTest2) {
-    CircularBuffer<int> cb(5, 0);
-    CircularBuffer<int> cb1(5, 1);
+    CircularBuffer cb(5, 0);
+    CircularBuffer cb1(5, 1);
     EXPECT_FALSE(cb == cb1);
     cb.swap(cb1);
     for (int i = 0; i < cb.size(); i++) {
@@ -22,8 +22,8 @@ TEST(Swap, SwapTest2) {
 TEST(Swap, SwapTest3) {
     int capacity = 3;
     int capacity1 = 5;
-    CircularBuffer<int> cb(capacity, 1);
-    CircularBuffer<int> cb1(capacity1, 1);
+    CircularBuffer cb(capacity, 1);
+    CircularBuffer cb1(capacity1, 1);
     EXPECT_TRUE(cb != cb1);
     cb.swap(cb1);
     EXPECT_EQ(cb.capacity(), capacity1);

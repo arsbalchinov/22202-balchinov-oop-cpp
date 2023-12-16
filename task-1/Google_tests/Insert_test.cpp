@@ -2,15 +2,15 @@
 #include "../CircularBuffer.h"
 
 TEST(Insert, EmptyTest) {
-    CircularBuffer<int> cb;
+    CircularBuffer cb;
     EXPECT_THROW(cb.insert(0, 1), out_of_range);
 }
 TEST(Insert, InsertTest1) {
-    CircularBuffer<int> cb(3);
+    CircularBuffer cb(3);
     EXPECT_THROW(cb.insert(5, 1), out_of_range);
 }
 TEST(Insert, InsertTest2) {
-    CircularBuffer<int> cb(3);
+    CircularBuffer cb(3);
     EXPECT_NO_THROW(cb.insert(0, 1));
     EXPECT_EQ(cb.capacity(), 3);
     EXPECT_EQ(cb.size(), 1);
@@ -18,7 +18,7 @@ TEST(Insert, InsertTest2) {
     EXPECT_EQ(cb.front(), 1);
 }
 TEST(Insert, InsertTest3) {
-    CircularBuffer<int> cb(3);
+    CircularBuffer cb(3);
     cb.insert(0, 1);
     EXPECT_FALSE(cb.empty());
     EXPECT_FALSE(cb.full());
@@ -28,7 +28,7 @@ TEST(Insert, InsertTest3) {
     EXPECT_EQ(cb.front(), 1);
 }
 TEST(Insert, InsertTest4) {
-    CircularBuffer<int> cb(3);
+    CircularBuffer cb(3);
     cb.push_back(0);
     cb.push_back(1);
     cb.insert(2, 2);

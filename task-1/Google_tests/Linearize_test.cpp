@@ -2,13 +2,13 @@
 #include "../CircularBuffer.h"
 
 TEST(Linearize, EmptyTest) {
-    CircularBuffer<int> cb;
+    CircularBuffer cb;
     EXPECT_EQ(cb.linearize(), nullptr);
 }
 TEST(Linearize, LinearizeTest) {
-    CircularBuffer<int> cb(5, 1);
+    CircularBuffer cb(5, 1);
     cb.push_back(3);    //3(tail), 1(head), 1, 1, 1
-    int* arr = cb.array();
+    char* arr = cb.array();
     EXPECT_EQ(arr[0], 3);
     EXPECT_EQ(arr[1], 1);
     EXPECT_FALSE(cb.is_linearized());
@@ -18,18 +18,18 @@ TEST(Linearize, LinearizeTest) {
     EXPECT_TRUE(cb.is_linearized());
 }
 TEST(Rotate, WrongBegin1) {
-    CircularBuffer<int> cb(5);
+    CircularBuffer cb(5);
     EXPECT_THROW(cb.rotate(0), out_of_range);
 }
 TEST(Rotate, WrongBegin2) {
-    CircularBuffer<int> cb(5, 0);
+    CircularBuffer cb(5, 0);
     cb.pop_back();
     EXPECT_THROW(cb.rotate(4), out_of_range);
 }
 TEST(Rotate, RotateTest3) {
-    CircularBuffer<int> cb(10);
+    CircularBuffer cb(10);
     for (int i = 0; i < 10; i++) {
-        cb.push_back(i);
+        cb.push_back((char)i);
     }
     cb.rotate(4);
     EXPECT_EQ(cb.front(), 4);

@@ -10,8 +10,9 @@ add_executable(Google_Tests_run
         Insert_test.cpp
         Erase_test.cpp
         Index_test.cpp
-        ../CircularBuffer.h
         Linearize_test.cpp
         CapacityResize_test.cpp
-        Swap_test.cpp)
+        Swap_test.cpp
+        ../CircularBuffer.h
+        ../CircularBuffer.cpp)
 target_link_libraries(Google_Tests_run gtest gtest_main)
