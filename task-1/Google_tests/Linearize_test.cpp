@@ -17,6 +17,14 @@ TEST(Linearize, LinearizeTest) {
     EXPECT_EQ(arr[4], 3);
     EXPECT_TRUE(cb.is_linearized());
 }
+TEST(Linearize, ConstLinearizeTest) {
+    const CircularBuffer cb(5, 1);
+    const char* arr = cb.array();
+    for (int i = 0; i < 5; i++) {
+        EXPECT_EQ(arr[i], 1);
+    }
+    EXPECT_TRUE(cb.is_linearized());
+}
 TEST(Rotate, WrongBegin1) {
     CircularBuffer cb(5);
     EXPECT_THROW(cb.rotate(0), out_of_range);

@@ -47,6 +47,7 @@ public:
     void rotate(int new_begin);
 //Get an unlinearized array from the buffer
     Type* array();
+    const Type* array() const;
 //The number of elements stored in the buffer.
     int size() const;
 //Return true, if size() == 0.

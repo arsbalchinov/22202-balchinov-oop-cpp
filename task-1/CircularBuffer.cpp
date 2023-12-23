@@ -120,6 +120,9 @@ typedef char Type;
     Type* CircularBuffer::array() {
         return buffer;
     }
+    const Type* CircularBuffer::array() const {
+        return buffer;
+}
 //The number of elements stored in the buffer.
     int CircularBuffer::size() const {
         return elemCount;
